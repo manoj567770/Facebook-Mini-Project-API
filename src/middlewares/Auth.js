@@ -1,0 +1,23 @@
+const jwt = require("jsonwebtoken");
+const { MINI_AUTH_TOKEN } = require("../Common/Constants");
+
+const auth = (req, res, next) => {
+  try {
+    let token = req.headers.authorization;
+
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized user" });
+    }
+
+    token = token.split(" ")[1];
+    let user = jwt.verify(token, MINI_AUTH_TOKEN);
+    req.userId = user.id;
+
+    next();
+  } catch (err) {
+    console.log(err);
+    return res.status(401).json({ message: "Unauthorized user" });
+  }
+};
+
+module.exports = { auth };
