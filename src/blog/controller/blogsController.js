@@ -1,8 +1,17 @@
 const { response } = require("express");
 const Blog = require("../../Models/Blog");
+
 const getBlogs = async (req, res) => {
   const { userId } = req;
-  return await res.status(200).json({ message: `Getting userId ${userId}` });
+  try {
+    const result = await Blog.find().sort({ time: "desc" });
+    return await res.status(200).json({ blogs: result });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ message: "somethings went wrong while fetching blogs" });
+  }
 };
 
 const createBlogs = async (req, res) => {
@@ -10,11 +19,11 @@ const createBlogs = async (req, res) => {
   const { title, content } = req.body;
 
   if (!title) {
-    return res.status(500).json({ message: "Title must be present" });
+    return res.status(400).json({ message: "Title must be present" });
   }
 
   if (!content) {
-    return res.status(500).json({ message: "content is missing" });
+    return res.status(400).json({ message: "content is missing" });
   }
 
   try {
