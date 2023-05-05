@@ -4,8 +4,11 @@ const Blog = require("../../Models/Blog");
 const getBlogs = async (req, res) => {
   const { userId } = req;
   try {
-    const result = await Blog.find().sort({ time: "desc" });
-    return await res.status(200).json({ blogs: result });
+    const result = await Blog.find({}).sort({ time: "desc" });
+    const resultById = result.filter((ele) => {
+      return ele.userId === userId;
+    });
+    return await res.status(200).json({ blogs: resultById });
   } catch (err) {
     console.log(err);
     res
